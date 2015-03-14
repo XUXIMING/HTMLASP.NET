@@ -46,10 +46,17 @@ namespace HMTL.NET
         public static string SimulatePost()
         {
             StringBuilder pars = new StringBuilder();
-            pars.Append("aa","dd");
+            pars.Append("__EVENTTARGET=ctl09_ctl04_nlGridView");
+            pars.Append("&__EVENTARGUMENT=");
+            pars.Append("&ctl09$ctl04$YearDropDownList=2009");
+
+            byte[] postData = Encoding.UTF8.GetBytes(pars.ToString());//编码，尤其是汉字，事先要看下抓取网页的编码方式  
+            string url = "http://www.randstad.com/press/news/";//地址  
             WebClient webClient = new WebClient();
-            byte[] page = webClient.DownloadData("http://www.randstad.com/press/news/");
-            string content = System.Text.Encoding.UTF8.GetString(page);
+            webClient.Headers.Add("Content-Type", "application/x-www-form-urlencoded");//采取POST方式必须加的header，如果改为GET方式的话就去掉这句话即可  
+            byte[] responseData = webClient.UploadData(url, "POST", postData);//得到返回字符流  
+            string content = Encoding.UTF8.GetString(responseData);//解码 
+
             return content;
 
         }
